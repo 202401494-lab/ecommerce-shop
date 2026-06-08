@@ -1,0 +1,19 @@
+{
+  "name": "ecommerce-app",
+  "version": "1.0.0",
+  "description": "E-commerce website with React frontend and Node.js backend",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "install-all": "npm install && npm install -w frontend && npm install -w backend",
+    "start": "concurrently \"npm start -w backend\" \"npm start -w frontend\"",
+    "backend": "npm start -w backend",
+    "frontend": "npm start -w frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
