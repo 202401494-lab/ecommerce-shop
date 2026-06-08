@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { FiPlus, FiMinus, FiTrash2 } from 'react-icons/fi';
 import api from './api';
 import { useCart } from './CartContext';
 import { useAuth } from './AuthContext';

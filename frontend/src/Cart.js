@@ -21,7 +21,7 @@ const Cart = ({ onCheckout }) => {
     }
 
     try {
-      const response = await api.post('/api/orders', {
+      await api.post('/api/orders', {
         items: cart,
         total: getTotal()
       });
