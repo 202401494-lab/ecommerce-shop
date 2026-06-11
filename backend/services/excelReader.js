@@ -11,10 +11,16 @@ class ExcelReader {
 
   loadProducts() {
     try {
-      const fullPath = path.join(__dirname, this.excelPath);
-      
+      let fullPath = path.join(__dirname, this.excelPath);
+
       if (!fs.existsSync(fullPath)) {
-        console.warn(`Excel file not found at ${fullPath}`);
+        const fallbackPath = path.resolve(__dirname, '..', '..', 'data', 'productos.xlsx');
+        console.warn(`Excel file not found at ${fullPath}, trying fallback path ${fallbackPath}`);
+        fullPath = fallbackPath;
+      }
+
+      if (!fs.existsSync(fullPath)) {
+        console.warn(`Excel file still not found at ${fullPath}`);
         this.products = [];
         return;
       }
