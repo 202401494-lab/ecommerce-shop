@@ -36,10 +36,21 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-const googleClientId = process.env.GOOGLE_CLIENT_ID;
-const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
-const backendUrl = process.env.BACKEND_URL || '';
-const googleCallbackURL = process.env.GOOGLE_CALLBACK_URL || (backendUrl ? `${backendUrl.replace(/\/$/, '')}/api/auth/google/callback` : '/api/auth/google/callback');
+let googleClientId = process.env.GOOGLE_CLIENT_ID;
+let googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+let backendUrl = process.env.BACKEND_URL || '';
+let googleCallbackURL = process.env.GOOGLE_CALLBACK_URL || '';
+
+// Auto-detect backend URL in production if not set
+if (!backendUrl && process.env.NODE_ENV === 'production') {
+  backendUrl = 'https://backend-production-0c7f.up.railway.app';
+  console.log(`⚠️  BACKEND_URL not set, using default for production: ${backendUrl}`);
+}
+
+if (!googleCallbackURL && backendUrl) {
+  googleCallbackURL = `${backendUrl.replace(/\/$/, '')}/api/auth/google/callback`;
+}
+
 let googleAuthEnabled = false;
 
 if (googleClientId && googleClientSecret) {

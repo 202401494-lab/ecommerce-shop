@@ -34,7 +34,8 @@ class ExcelReader {
         if (!trimmed) return '';
         if (/^https?:\/\//i.test(trimmed)) return trimmed;
         trimmed = trimmed.replace(/\\/g, '/');
-        return `/images/${encodeURI(path.basename(trimmed))}`;
+        const filename = path.basename(trimmed);
+        return filename ? `/images/${encodeURI(filename)}` : '';
       };
 
       this.products = data.map((row, index) => {
@@ -53,6 +54,9 @@ class ExcelReader {
       }).filter(p => p.nombre); // Filter out empty rows
 
       console.log(`✓ Loaded ${this.products.length} products from Excel`);
+      if (this.products.length > 0) {
+        console.log(`First product: ${this.products[0].nombre}, Image: ${this.products[0].imagen}`);
+      }
     } catch (error) {
       console.error('Error loading Excel file:', error.message);
       this.products = [];
