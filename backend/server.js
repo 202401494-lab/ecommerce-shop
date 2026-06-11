@@ -15,12 +15,21 @@ const PORT = process.env.PORT || 5000;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'abi05guardado@gmail.com';
 
 // Middleware
+// Determine image serving path
+let imagePath = process.env.IMAGES_PATH;
+if (!imagePath) {
+  const fallbackPath1 = path.resolve(__dirname, '..', '..', 'data', 'imagenes');
+  const fallbackPath2 = path.resolve(__dirname, '..', 'data', 'imagenes');
+  imagePath = require('fs').existsSync(fallbackPath1) ? fallbackPath1 : fallbackPath2;
+}
+console.log(`📁 Image path: ${imagePath}`);
+
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }));
 app.use(express.json());
-app.use('/images', express.static(path.resolve(__dirname, '..', '..', 'data', 'imagenes')));
+app.use('/images', express.static(imagePath));
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
@@ -45,6 +54,12 @@ let googleCallbackURL = process.env.GOOGLE_CALLBACK_URL || '';
 if (!backendUrl && process.env.NODE_ENV === 'production') {
   backendUrl = 'https://backend-production-0c7f.up.railway.app';
   console.log(`⚠️  BACKEND_URL not set, using default for production: ${backendUrl}`);
+}
+
+// Ensure FRONTEND_URL is set in production
+if (process.env.NODE_ENV === 'production' && !process.env.FRONTEND_URL) {
+  console.error(`❌ FRONTEND_URL is required in production`);
+  console.log(`   Please set FRONTEND_URL=https://frontend-production-4fe2.up.railway.app in Railway variables`);
 }
 
 if (!googleCallbackURL && backendUrl) {
