@@ -23,6 +23,8 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
+      // Add a small delay to ensure config has loaded
+      await new Promise(resolve => setTimeout(resolve, 100));
       const response = await api.get('/api/auth/me');
       setUser(response.data.user);
       setIsAdmin(response.data.isAdmin);

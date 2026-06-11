@@ -166,6 +166,13 @@ app.get('/api/auth/me', (req, res) => {
   }
 });
 
+// Config Route - Serve dynamic configuration to frontend
+app.get('/config.json', (req, res) => {
+  res.json({
+    API_URL: backendUrl || 'http://localhost:5000'
+  });
+});
+
 // Products Routes
 app.get('/api/products', (req, res) => {
   try {
