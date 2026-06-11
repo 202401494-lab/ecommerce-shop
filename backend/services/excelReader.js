@@ -30,9 +30,10 @@ class ExcelReader {
       const data = XLSX.utils.sheet_to_json(worksheet);
 
       const normalizeImagePath = (imagePath) => {
-        const trimmed = String(imagePath).trim();
+        let trimmed = String(imagePath).trim();
         if (!trimmed) return '';
         if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        trimmed = trimmed.replace(/\\/g, '/');
         return `/images/${encodeURI(path.basename(trimmed))}`;
       };
 
