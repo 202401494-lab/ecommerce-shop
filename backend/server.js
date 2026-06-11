@@ -54,6 +54,10 @@ if (!googleCallbackURL && backendUrl) {
 let googleAuthEnabled = false;
 
 if (googleClientId && googleClientSecret) {
+  console.log(`🔧 Configuring Google OAuth Strategy...`);
+  console.log(`   Client ID: ${googleClientId.substring(0, 20)}...`);
+  console.log(`   Callback: ${googleCallbackURL}`);
+  
   passport.use(new GoogleStrategy({
       clientID: googleClientId,
       clientSecret: googleClientSecret,
@@ -92,16 +96,34 @@ dbService.init();
 
 // Auth Routes
 if (googleAuthEnabled) {
+  console.log(`✓ Google OAuth enabled`);
+  console.log(`📍 Callback URL: ${googleCallbackURL}`);
+  
   app.get('/api/auth/google',
     passport.authenticate('google', { scope: ['profile', 'email'] })
   );
 
   app.get('/api/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
+    passport.authenticate('google', { 
+      failureRedirect: '/api/auth/failure',
+      failureMessage: true 
+    }),
     (req, res) => {
-      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?success=true`);
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      console.log(`✓ Google OAuth callback successful for user: ${req.user?.email}`);
+      console.log(`🔗 Redirecting to: ${frontendUrl}/dashboard?success=true`);
+      res.redirect(`${frontendUrl}/dashboard?success=true`);
     }
   );
+  
+  app.get('/api/auth/failure', (req, res) => {
+    console.error(`❌ Google OAuth authentication failed`);
+    console.error(`   Message:`, req.session?.messages);
+    res.status(401).json({ 
+      error: 'Google authentication failed',
+      message: req.session?.messages?.[0] || 'Unknown error'
+    });
+  });
 } else {
   app.get('/api/auth/google', (req, res) => {
     res.status(503).json({ error: 'Google OAuth is not configured.' });

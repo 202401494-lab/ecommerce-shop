@@ -10,6 +10,15 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     checkAuth();
+    // Re-check auth when returning from OAuth callback
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      // Wait a moment for session to be established, then verify
+      setTimeout(() => {
+        checkAuth();
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }, 500);
+    }
   }, []);
 
   const checkAuth = async () => {
