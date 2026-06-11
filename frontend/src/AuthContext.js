@@ -26,7 +26,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const loginWithGoogle = () => {
-    window.location.href = '/api/auth/google';
+    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    window.location.href = `${backendUrl}/api/auth/google`;
   };
 
   const logout = async () => {

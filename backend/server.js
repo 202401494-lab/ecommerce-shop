@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
@@ -19,6 +20,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use('/images', express.static(path.resolve(__dirname, '..', '..', 'data', 'imagenes')));
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,

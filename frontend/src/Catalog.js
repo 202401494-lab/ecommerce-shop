@@ -39,6 +39,13 @@ const Catalog = () => {
     return <div className="text-center py-12">Cargando productos...</div>;
   }
 
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (/^https?:\/\//i.test(imagePath)) return imagePath;
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    return `${apiUrl}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Catálogo de Productos</h1>
@@ -59,7 +66,7 @@ const Catalog = () => {
             >
               {product.imagen ? (
                 <img
-                  src={product.imagen}
+                  src={getImageUrl(product.imagen)}
                   alt={product.nombre}
                   className="w-full h-48 object-cover"
                 />

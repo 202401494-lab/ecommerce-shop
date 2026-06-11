@@ -29,15 +29,27 @@ class ExcelReader {
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const data = XLSX.utils.sheet_to_json(worksheet);
 
-      this.products = data.map((row, index) => ({
-        id: row.id || index + 1,
-        nombre: row.nombre || row.name || '',
-        precio: parseFloat(row.precio || row.price || 0),
-        descripcion: row.descripcion || row.description || '',
-        imagen: row.imagen || row.image || '',
-        categoria: row.categoria || row.category || '',
-        stock: parseInt(row.stock || 0)
-      })).filter(p => p.nombre); // Filter out empty rows
+      const normalizeImagePath = (imagePath) => {
+        const trimmed = String(imagePath).trim();
+        if (!trimmed) return '';
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        return `/images/${encodeURI(path.basename(trimmed))}`;
+      };
+
+      this.products = data.map((row, index) => {
+        const rawImage = row.imagen || row.image || '';
+        const normalizedImage = rawImage ? normalizeImagePath(rawImage) : '';
+
+        return {
+          id: row.id || index + 1,
+          nombre: row.nombre || row.name || '',
+          precio: parseFloat(row.precio || row.price || 0),
+          descripcion: row.descripcion || row.description || '',
+          imagen: normalizedImage,
+          categoria: row.categoria || row.category || '',
+          stock: parseInt(row.stock || 0)
+        };
+      }).filter(p => p.nombre); // Filter out empty rows
 
       console.log(`✓ Loaded ${this.products.length} products from Excel`);
     } catch (error) {
