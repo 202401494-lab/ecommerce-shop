@@ -38,8 +38,8 @@ app.use(passport.session());
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
-const backendUrl = process.env.BACKEND_URL || process.env.FRONTEND_URL || '';
-const googleCallbackURL = process.env.GOOGLE_CALLBACK_URL || `${backendUrl.replace(/\/$/, '')}/api/auth/google/callback`;
+const backendUrl = process.env.BACKEND_URL || '';
+const googleCallbackURL = process.env.GOOGLE_CALLBACK_URL || (backendUrl ? `${backendUrl.replace(/\/$/, '')}/api/auth/google/callback` : '/api/auth/google/callback');
 let googleAuthEnabled = false;
 
 if (googleClientId && googleClientSecret) {
